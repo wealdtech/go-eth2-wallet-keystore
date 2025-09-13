@@ -34,6 +34,7 @@ type account struct {
 	unlocked  bool
 	secretKey e2types.PrivateKey
 	version   uint
+	path      string
 	wallet    *wallet
 	encryptor e2wtypes.Encryptor
 	mutex     sync.Mutex
@@ -135,9 +136,9 @@ func (a *account) IsUnlocked(_ context.Context) (bool, error) {
 	return a.unlocked, nil
 }
 
-// Path returns "" as keystore accounts are not necessarily derived.
+// Path returns the derivation path for the account.
 func (a *account) Path() string {
-	return ""
+	return a.path
 }
 
 // Sign signs data.

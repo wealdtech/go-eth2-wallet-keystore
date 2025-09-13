@@ -31,6 +31,7 @@ func (a *account) MarshalJSON() ([]byte, error) {
 	data["pubkey"] = hex.EncodeToString(a.publicKey.Marshal())
 	data["crypto"] = a.crypto
 	data["version"] = a.version
+	data["path"] = a.path
 
 	return json.Marshal(data)
 }
@@ -104,6 +105,17 @@ func (a *account) UnmarshalJSON(data []byte) error {
 	// Only support keystore v4 at current.
 	if a.version != 4 {
 		return errors.New("unsupported keystore version")
+	}
+
+	// Handle path field, optional.
+	if val, exists := v["path"]; exists {
+		path, ok := val.(string)
+		if !ok {
+			return errors.New("account path invalid")
+		}
+		a.path = path
+	} else {
+		a.path = ""
 	}
 
 	// Keystore does not support different encryptors; use default.
